@@ -60,12 +60,13 @@ type Provisioner struct {
 //	  },
 //	}
 type VolumeConfig struct {
-	pvName     string
-	pvcName    string
-	scName     string
-	options    map[string]interface{}
-	configData map[string]interface{}
-	configList map[string]interface{}
+	pvName       string
+	pvcName      string
+	pvcNamespace string
+	scName       string
+	options      map[string]interface{}
+	configData   map[string]interface{}
+	configList   map[string]interface{}
 }
 
 // GetVolumeConfigFn allows to plugin a custom function

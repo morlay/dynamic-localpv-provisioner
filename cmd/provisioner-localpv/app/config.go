@@ -1,10 +1,13 @@
 package app
 
 import (
+	"cmp"
 	"context"
-	"gopkg.in/yaml.v3"
+	"fmt"
 	"strconv"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 
 	mconfig "github.com/openebs/maya/pkg/apis/openebs.io/v1alpha1"
 	hostpath "github.com/openebs/maya/pkg/hostpath/v1alpha1"
@@ -198,12 +201,13 @@ func (p *Provisioner) GetVolumeConfig(ctx context.Context, pvName string, pvc *c
 	}
 
 	c := &VolumeConfig{
-		pvName:     pvName,
-		pvcName:    pvc.ObjectMeta.Name,
-		scName:     *scName,
-		options:    pvConfigMap,
-		configData: dataPvConfigMap,
-		configList: listPvConfigMap,
+		pvName:       pvName,
+		pvcName:      pvc.ObjectMeta.Name,
+		pvcNamespace: pvc.ObjectMeta.Namespace,
+		scName:       *scName,
+		options:      pvConfigMap,
+		configData:   dataPvConfigMap,
+		configList:   listPvConfigMap,
 	}
 	return c, nil
 }
@@ -301,7 +305,7 @@ func (c *VolumeConfig) GetPath() (string, error) {
 	//	pvRelPath = c.pvName
 	//}
 
-	pvRelPath := c.pvName
+	pvRelPath := fmt.Sprintf("pvc-%s.%s", c.pvcName, cmp.Or(c.pvcNamespace, "default"))
 	//path := filepath.Join(basePath, pvRelPath)
 
 	return hostpath.NewBuilder().
