@@ -1,7 +1,9 @@
 package app
 
 import (
+	"cmp"
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -204,12 +206,13 @@ func (p *Provisioner) GetVolumeConfig(ctx context.Context, pvName string, pvc *c
 	}
 
 	c := &VolumeConfig{
-		pvName:     pvName,
-		pvcName:    pvc.Name,
-		scName:     *scName,
-		options:    pvConfigMap,
-		configData: dataPvConfigMap,
-		configList: listPvConfigMap,
+		pvName:       pvName,
+		pvcName:      pvc.ObjectMeta.Name,
+		pvcNamespace: pvc.ObjectMeta.Namespace,
+		scName:       *scName,
+		options:      pvConfigMap,
+		configData:   dataPvConfigMap,
+		configList:   listPvConfigMap,
 	}
 	return c, nil
 }
@@ -307,7 +310,7 @@ func (c *VolumeConfig) GetPath() (string, error) {
 	//	pvRelPath = c.pvName
 	//}
 
-	pvRelPath := c.pvName
+	pvRelPath := fmt.Sprintf("pvc-%s.%s", c.pvcName, cmp.Or(c.pvcNamespace, "default"))
 	//path := filepath.Join(basePath, pvRelPath)
 
 	return hostpath.NewBuilder().
